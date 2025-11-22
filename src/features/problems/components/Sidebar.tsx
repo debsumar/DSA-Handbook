@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import type { RootState } from '../../../app/store';
 import { setTopic, setPattern } from '../problemsSlice';
 import { useGetProblemsDataQuery } from '../problemsApi';
+import { getTopicIcon } from '../../../lib/topicIcons';
 
 export const Sidebar = () => {
     const dispatch = useDispatch();
@@ -31,6 +32,8 @@ export const Sidebar = () => {
                     {topics.map((topic, index) => {
                         const { total, completed } = getTopicStats(topic.id);
                         const isSelected = selectedTopic === topic.id;
+                        const { icon: TopicIcon, color } = getTopicIcon(topic.name);
+
                         return (
                             <motion.button
                                 key={topic.id}
@@ -57,7 +60,16 @@ export const Sidebar = () => {
                                     />
                                 )}
 
-                                <span className="relative z-10">{topic.name}</span>
+                                <div className="relative z-10 flex items-center gap-2">
+                                    <div className="p-1.5 flex items-center justify-center">
+                                        <TopicIcon
+                                            size={16}
+                                            className={`${isSelected ? color.replace('bg-', 'text-') : 'text-[var(--text-secondary)]'} opacity-90`}
+                                            strokeWidth={2.5}
+                                        />
+                                    </div>
+                                    <span>{topic.name}</span>
+                                </div>
                                 <motion.span
                                     className={`relative z-10 text-xs px-1.5 py-0.5 rounded-full transition-colors
                                         ${completed === total && total > 0 ? 'bg-green-500/20 text-green-500' : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] group-hover:bg-[var(--bg-primary)]'}

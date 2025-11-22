@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { updateStreak } from '../../lib/streakUtils';
 
 interface ProblemsState {
     filter: string;
@@ -59,6 +60,8 @@ const problemsSlice = createSlice({
                 state.completedProblemIds.splice(index, 1); // Remove if exists
             } else {
                 state.completedProblemIds.push(problemId); // Add if not exists
+                // Update streak when completing a problem
+                updateStreak();
             }
             // Save to localStorage
             saveCompletedProblems(state.completedProblemIds);
