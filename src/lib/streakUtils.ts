@@ -1,46 +1,6 @@
-/**
- * Utility functions for tracking user progress and streaks
- */
+import type { CompletedProblem } from '../features/problems/problemsSlice';
 
-interface StreakData {
-    currentStreak: number;
-    lastCompletionDate: string | null;
-    dailyCompletions: Record<string, number>; // date -> count
-}
-
-const STREAK_KEY = 'dsa_streak_data';
 const DAILY_GOAL = 5;
-
-/**
- * Load streak data from localStorage
- */
-export const loadStreakData = (): StreakData => {
-    try {
-        const saved = localStorage.getItem(STREAK_KEY);
-        if (saved) {
-            return JSON.parse(saved);
-        }
-    } catch (error) {
-        console.error('Failed to load streak data:', error);
-    }
-
-    return {
-        currentStreak: 0,
-        lastCompletionDate: null,
-        dailyCompletions: {},
-    };
-};
-
-/**
- * Save streak data to localStorage
- */
-export const saveStreakData = (data: StreakData): void => {
-    try {
-        localStorage.setItem(STREAK_KEY, JSON.stringify(data));
-    } catch (error) {
-        console.error('Failed to save streak data:', error);
-    }
-};
 
 /**
  * Get today's date in YYYY-MM-DD format
@@ -51,87 +11,98 @@ const getTodayString = (): string => {
 };
 
 /**
- * Check if two dates are consecutive days
+ * Get daily completions map (date -> count)
  */
-const areConsecutiveDays = (date1: string, date2: string): boolean => {
-    const d1 = new Date(date1);
-    const d2 = new Date(date2);
-    const diffTime = Math.abs(d2.getTime() - d1.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays === 1;
-};
-
-/**
- * Update streak when a problem is completed
- */
-export const updateStreak = (): StreakData => {
-    const data = loadStreakData();
-    const today = getTodayString();
-
-    // Update daily completion count
-    data.dailyCompletions[today] = (data.dailyCompletions[today] || 0) + 1;
-
-    // Update streak
-    if (data.lastCompletionDate === null) {
-        // First ever completion
-        data.currentStreak = 1;
-    } else if (data.lastCompletionDate === today) {
-        // Already completed today, no streak change
-        // Streak stays the same
-    } else if (areConsecutiveDays(data.lastCompletionDate, today)) {
-        // Consecutive day, increment streak
-        data.currentStreak += 1;
-    } else {
-        // Broke the streak, reset to 1
-        data.currentStreak = 1;
-    }
-
-    data.lastCompletionDate = today;
-    saveStreakData(data);
-    return data;
+export const getDailyCompletions = (completedProblems: CompletedProblem[]): Record<string, number> => {
+    const completions: Record<string, number> = {};
+    completedProblems.forEach(p => {
+        const date = p.completedAt.split('T')[0];
+        completions[date] = (completions[date] || 0) + 1;
+    });
+    return completions;
 };
 
 /**
  * Get today's completion count
  */
-export const getTodayCompletions = (): number => {
-    const data = loadStreakData();
+export const getTodayCompletions = (completedProblems: CompletedProblem[]): number => {
     const today = getTodayString();
-    return data.dailyCompletions[today] || 0;
+    const completions = getDailyCompletions(completedProblems);
+    return completions[today] || 0;
 };
 
 /**
  * Get daily goal progress (e.g., "3/5")
  */
-export const getDailyGoalProgress = (): { completed: number; total: number } => {
-    const completed = getTodayCompletions();
+export const getDailyGoalProgress = (completedProblems: CompletedProblem[]): { completed: number; total: number } => {
+    const completed = getTodayCompletions(completedProblems);
     return { completed, total: DAILY_GOAL };
 };
 
 /**
  * Get streak count
  */
-export const getCurrentStreak = (): number => {
-    const data = loadStreakData();
+export const getCurrentStreak = (completedProblems: CompletedProblem[]): number => {
+    const completions = getDailyCompletions(completedProblems);
+    const sortedDates = Object.keys(completions).sort();
+
+    if (sortedDates.length === 0) return 0;
+
     const today = getTodayString();
-
-    // Check if streak is still valid (completed today or yesterday)
-    if (data.lastCompletionDate === null) {
-        return 0;
-    }
-
-    if (data.lastCompletionDate === today) {
-        return data.currentStreak;
-    }
-
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayString = yesterday.toISOString().split('T')[0];
 
-    if (data.lastCompletionDate === yesterdayString) {
-        return data.currentStreak;
+    // Check if the last completion was today or yesterday
+    const lastDate = sortedDates[sortedDates.length - 1];
+    if (lastDate !== today && lastDate !== yesterdayString) {
+        return 0;
     }
 
-    // Streak broken if not completed today or yesterday
-    return 0;
+    let streak = 1; // Start with 1 since we have at least one valid day (today or yesterday)
+    let currentDate = new Date(lastDate);
+
+    // Iterate backwards checking for consecutive days
+    for (let i = sortedDates.length - 2; i >= 0; i--) {
+        const dateStr = sortedDates[i];
+        const date = new Date(dateStr);
+
+        const expectedDate = new Date(currentDate);
+        expectedDate.setDate(expectedDate.getDate() - 1);
+
+        // Compare dates (ignoring time)
+        if (date.toISOString().split('T')[0] === expectedDate.toISOString().split('T')[0]) {
+            streak++;
+            currentDate = date;
+        } else {
+            break;
+        }
+    }
+
+    return streak;
+};
+
+/**
+ * Get activity data for the last 10 days
+ * Returns an array of percentages (0-100) based on daily goal
+ */
+export const getLast10DaysActivity = (completedProblems: CompletedProblem[]): number[] => {
+    const completions = getDailyCompletions(completedProblems);
+    const today = new Date();
+
+    let maxCount = DAILY_GOAL;
+    const last10DaysCounts: number[] = [];
+
+    // Calculate counts for last 10 days
+    for (let i = 9; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(today.getDate() - i);
+        const dateString = d.toISOString().split('T')[0];
+        const count = completions[dateString] || 0;
+        last10DaysCounts.push(count);
+        if (count > maxCount) maxCount = count;
+    }
+
+    // Normalize to percentages (0-100)
+    return last10DaysCounts.map(count => Math.round((count / maxCount) * 100));
 };

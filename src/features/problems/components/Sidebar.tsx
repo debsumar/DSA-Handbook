@@ -8,7 +8,8 @@ import { getTopicIcon } from '../../../lib/topicIcons';
 
 export const Sidebar = () => {
     const dispatch = useDispatch();
-    const { selectedTopic, selectedPattern, completedProblemIds } = useSelector((state: RootState) => state.problems);
+    const { selectedTopic, selectedPattern, completedProblems } = useSelector((state: RootState) => state.problems);
+    const completedProblemIds = completedProblems.map(p => p.id);
     const { data } = useGetProblemsDataQuery();
 
     // Get topics and patterns from API

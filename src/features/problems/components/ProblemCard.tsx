@@ -17,8 +17,8 @@ export const ProblemCard = ({ problem, index }: ProblemCardProps) => {
     const [showRipple, setShowRipple] = useState(false);
     const dispatch = useDispatch();
     const checkboxControls = useAnimation();
-    const completedProblemIds = useSelector((state: RootState) => state.problems.completedProblemIds);
-    const isDone = completedProblemIds.includes(problem.id);
+    const completedProblems = useSelector((state: RootState) => state.problems.completedProblems);
+    const isDone = completedProblems.some(p => p.id === problem.id);
 
     const handleCheckboxClick = () => {
         dispatch(toggleProblemCompletion(problem.id));

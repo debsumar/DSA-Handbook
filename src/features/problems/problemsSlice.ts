@@ -1,19 +1,36 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { updateStreak } from '../../lib/streakUtils';
+
+export interface CompletedProblem {
+    id: string;
+    completedAt: string; // ISO date string
+}
 
 interface ProblemsState {
     filter: string;
     difficulty: 'All' | 'Easy' | 'Medium' | 'Hard';
     selectedTopic: number | null;
     selectedPattern: number | null;
-    completedProblemIds: string[];
+    completedProblems: CompletedProblem[];
 }
 
 // Load completed problems from localStorage
-const loadCompletedProblems = (): string[] => {
+const loadCompletedProblems = (): CompletedProblem[] => {
     try {
-        const saved = localStorage.getItem('completedProblemIds');
-        return saved ? JSON.parse(saved) : [];
+        const saved = localStorage.getItem('completedProblemsV2');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+
+        // Migration from old format (string[])
+        const oldSaved = localStorage.getItem('completedProblemIds');
+        if (oldSaved) {
+            const ids: string[] = JSON.parse(oldSaved);
+            const now = new Date().toISOString();
+            const migrated = ids.map(id => ({ id, completedAt: now }));
+            return migrated;
+        }
+
+        return [];
     } catch (error) {
         console.error('Failed to load completed problems:', error);
         return [];
@@ -21,9 +38,11 @@ const loadCompletedProblems = (): string[] => {
 };
 
 // Save completed problems to localStorage
-const saveCompletedProblems = (completedIds: string[]) => {
+const saveCompletedProblems = (completedProblems: CompletedProblem[]) => {
     try {
-        localStorage.setItem('completedProblemIds', JSON.stringify(completedIds));
+        localStorage.setItem('completedProblemsV2', JSON.stringify(completedProblems));
+        // Sync to old key for backward compatibility/safety
+        localStorage.setItem('completedProblemIds', JSON.stringify(completedProblems.map(p => p.id)));
     } catch (error) {
         console.error('Failed to save completed problems:', error);
     }
@@ -34,7 +53,7 @@ const initialState: ProblemsState = {
     difficulty: 'All',
     selectedTopic: 1, // Default to Array (id: 1)
     selectedPattern: 1, // Default to All Patterns (id: 1)
-    completedProblemIds: loadCompletedProblems(),
+    completedProblems: loadCompletedProblems(),
 };
 
 const problemsSlice = createSlice({
@@ -55,16 +74,18 @@ const problemsSlice = createSlice({
         },
         toggleProblemCompletion(state, action: PayloadAction<string>) {
             const problemId = action.payload;
-            const index = state.completedProblemIds.indexOf(problemId);
+            const index = state.completedProblems.findIndex(p => p.id === problemId);
+
             if (index !== -1) {
-                state.completedProblemIds.splice(index, 1); // Remove if exists
+                state.completedProblems.splice(index, 1); // Remove if exists
             } else {
-                state.completedProblemIds.push(problemId); // Add if not exists
-                // Update streak when completing a problem
-                updateStreak();
+                state.completedProblems.push({
+                    id: problemId,
+                    completedAt: new Date().toISOString()
+                }); // Add if not exists
             }
             // Save to localStorage
-            saveCompletedProblems(state.completedProblemIds);
+            saveCompletedProblems(state.completedProblems);
         },
     },
 });

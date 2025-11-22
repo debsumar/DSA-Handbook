@@ -18,7 +18,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../app/store';
-import { getCurrentStreak, getDailyGoalProgress } from '../../../lib/streakUtils';
+import { getCurrentStreak, getDailyGoalProgress, getLast10DaysActivity } from '../../../lib/streakUtils';
 import { useGetProblemsDataQuery } from '../problemsApi';
 import { getTopicIcon } from '../../../lib/topicIcons';
 
@@ -485,7 +485,8 @@ const QuoteCard = ({ className, delay }: { className?: string, delay?: number })
 
 export const Home = () => {
     // Get completed problems from Redux
-    const completedProblemIds = useSelector((state: RootState) => state.problems.completedProblemIds);
+    const completedProblems = useSelector((state: RootState) => state.problems.completedProblems);
+    const completedProblemIds = completedProblems.map(p => p.id);
 
     // Get problems data to calculate topic mastery
     const { data: problemsData } = useGetProblemsDataQuery();
@@ -493,12 +494,14 @@ export const Home = () => {
     // Track streak and daily goals
     const [streak, setStreak] = useState(0);
     const [dailyGoal, setDailyGoal] = useState({ completed: 0, total: 5 });
+    const [activityData, setActivityData] = useState<number[]>(Array(10).fill(0));
 
     // Update streak and daily goal on mount and when completedProblemIds changes
     useEffect(() => {
-        setStreak(getCurrentStreak());
-        setDailyGoal(getDailyGoalProgress());
-    }, [completedProblemIds]);
+        setStreak(getCurrentStreak(completedProblems));
+        setDailyGoal(getDailyGoalProgress(completedProblems));
+        setActivityData(getLast10DaysActivity(completedProblems));
+    }, [completedProblems]);
 
     // Calculate total completed
     const totalCompleted = completedProblemIds.length;
@@ -628,7 +631,7 @@ export const Home = () => {
                         </div>
 
                         <div className="flex items-end justify-between h-24 gap-1.5">
-                            {[35, 60, 25, 65, 45, 80, 55, 90, 70, 100].map((h, i) => (
+                            {activityData.map((h, i) => (
                                 <motion.div
                                     key={i}
                                     className="w-full bg-[var(--text-secondary)]/20 rounded-t-md relative group/bar overflow-hidden"
