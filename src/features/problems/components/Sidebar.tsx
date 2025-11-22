@@ -40,7 +40,7 @@ export const Sidebar = () => {
                                 transition={{ delay: index * 0.03 }}
                                 whileHover={{ scale: 1.02, x: 4 }}
                                 whileTap={{ scale: 0.98 }}
-                                className={`relative w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center group overflow-hidden
+                                className={`relative w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex justify-between items-center group overflow-hidden cursor-pointer
                                     ${isSelected
                                         ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-medium'
                                         : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
@@ -87,7 +87,7 @@ export const Sidebar = () => {
                                 transition={{ delay: index * 0.05, type: "spring", stiffness: 300 }}
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                className={`px-3 py-1.5 rounded-full text-xs transition-all border flex items-center gap-1.5 relative overflow-hidden
+                                className={`px-3 py-1.5 rounded-full text-xs transition-all border flex items-center gap-1.5 relative overflow-hidden cursor-pointer
                                     ${isSelected
                                         ? 'bg-[var(--accent-primary)] text-black border-[var(--accent-primary)] font-medium shadow-lg shadow-[var(--accent-primary)]/30'
                                         : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-transparent hover:border-[var(--accent-primary)]'

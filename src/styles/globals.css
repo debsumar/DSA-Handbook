@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", system-ui, sans-serif;
-}
+
 
 :root {
   --bg-primary: #ffffff;
@@ -12,6 +10,11 @@
   --accent-primary: #16a34a; /* Green-600 for light mode contrast */
   --accent-hover: #15803d;
   --border-color: #e4e4e7;
+  
+  /* Scrollbar colors */
+  --scrollbar-track: #f4f4f5;
+  --scrollbar-thumb: #d4d4d8;
+  --scrollbar-thumb-hover: #a1a1aa;
 }
 
 .dark {
@@ -22,6 +25,11 @@
   --accent-primary: #39ff14; /* Neon Green */
   --accent-hover: #2ecc71;
   --border-color: #262626;
+  
+  /* Scrollbar colors for dark mode */
+  --scrollbar-track: #171717;
+  --scrollbar-thumb: #3f3f46;
+  --scrollbar-thumb-hover: #52525b;
 }
 
 body {
@@ -30,14 +38,76 @@ body {
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
+/* ============================================
+   Custom Scrollbar Styles
+   ============================================ */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track);
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  border-color: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--accent-primary);
+}
+
+/* Thin scrollbar variant for smaller areas */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  border: 1px solid var(--scrollbar-track);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* ============================================
+   Keyframe Animations
+   ============================================ */
+
 /* Neon animation for Debanjan */
+/* Subtle visible glow for debanjan - Light mode */
 @keyframes neonPulse {
-  0%, 100% { text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff; }
-  50% { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff, 0 0 50px #ff00ff; }
+  0%, 100% { text-shadow: 0 0 3px #ff00ff, 0 0 8px rgba(255, 0, 255, 0.1); }
+  50% { text-shadow: 0 0 5px #ff00ff, 0 0 12px rgba(255, 0, 255, 0.1); }
+}
+
+/* Brighter glow for dark mode */
+@keyframes neonPulseDark {
+  0%, 100% { text-shadow: 0 0 4px #ff00ff, 0 0 10px rgba(255, 0, 255, 0.3), 0 0 15px rgba(255, 0, 255, 0.1); }
+  50% { text-shadow: 0 0 6px #ff00ff, 0 0 14px rgba(255, 0, 255, 0.4), 0 0 20px rgba(255, 0, 255, 0.15); }
 }
 
 .animate-neon {
-  animation: neonPulse 2s infinite ease-in-out;
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+.dark .animate-neon {
+  animation: neonPulseDark 3s infinite ease-in-out;
 }
 
 /* Pulse animation for micro-interactions */
@@ -69,4 +139,3 @@ body {
 .animate-shimmer {
   animation: shimmer 2s linear infinite;
 }
-
