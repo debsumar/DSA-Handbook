@@ -1,0 +1,211 @@
+{
+    "topics": {
+        "1": {
+            "id": 1,
+            "name": "Array"
+        },
+        "2": {
+            "id": 2,
+            "name": "2D Array"
+        },
+        "3": {
+            "id": 3,
+            "name": "Strings"
+        },
+        "4": {
+            "id": 4,
+            "name": "Searching"
+        },
+        "5": {
+            "id": 5,
+            "name": "Sorting"
+        },
+        "6": {
+            "id": 6,
+            "name": "Recursion"
+        },
+        "7": {
+            "id": 7,
+            "name": "Stack"
+        },
+        "8": {
+            "id": 8,
+            "name": "Queue"
+        },
+        "9": {
+            "id": 9,
+            "name": "Linked List"
+        },
+        "10": {
+            "id": 10,
+            "name": "Heap"
+        },
+        "11": {
+            "id": 11,
+            "name": "Hashing"
+        },
+        "12": {
+            "id": 12,
+            "name": "Binary Tree"
+        },
+        "13": {
+            "id": 13,
+            "name": "Binary Search Tree"
+        },
+        "14": {
+            "id": 14,
+            "name": "Advanced Trees"
+        },
+        "15": {
+            "id": 15,
+            "name": "Graph"
+        },
+        "16": {
+            "id": 16,
+            "name": "DP"
+        },
+        "17": {
+            "id": 17,
+            "name": "Greedy Algorithms"
+        },
+        "18": {
+            "id": 18,
+            "name": "Backtracking"
+        },
+        "100": {
+            "id": 100,
+            "name": "Linked List"
+        },
+        "101": {
+            "id": 101,
+            "name": "Binary Tree"
+        }
+    },
+    "patterns": {
+        "1": {
+            "id": 1,
+            "name": "All Patterns"
+        },
+        "2": {
+            "id": 2,
+            "name": "Binary Search"
+        },
+        "3": {
+            "id": 3,
+            "name": "Binary Search on Answer"
+        },
+        "4": {
+            "id": 4,
+            "name": "Bit Manipulation"
+        },
+        "5": {
+            "id": 5,
+            "name": "Boyer–Moore Voting (Majority)"
+        },
+        "6": {
+            "id": 6,
+            "name": "Difference Array"
+        },
+        "7": {
+            "id": 7,
+            "name": "Fast & Slow Pointers"
+        },
+        "8": {
+            "id": 8,
+            "name": "Fenwick Tree (BIT)"
+        },
+        "9": {
+            "id": 9,
+            "name": "General"
+        },
+        "10": {
+            "id": 10,
+            "name": "Greedy"
+        },
+        "11": {
+            "id": 11,
+            "name": "Hash Map / Set"
+        },
+        "12": {
+            "id": 12,
+            "name": "Heap / Priority Queue"
+        },
+        "13": {
+            "id": 13,
+            "name": "Kadane / Subarray"
+        },
+        "14": {
+            "id": 14,
+            "name": "LIS / Patience Sorting"
+        },
+        "15": {
+            "id": 15,
+            "name": "Merge Sort"
+        },
+        "16": {
+            "id": 16,
+            "name": "Monotonic Queue"
+        },
+        "17": {
+            "id": 17,
+            "name": "Monotonic Stack"
+        },
+        "18": {
+            "id": 18,
+            "name": "Order Statistics (Quickselect)"
+        },
+        "19": {
+            "id": 19,
+            "name": "Prefix Sum"
+        },
+        "20": {
+            "id": 20,
+            "name": "Prefix/Suffix Products"
+        },
+        "21": {
+            "id": 21,
+            "name": "Range Queries (Segment Tree)"
+        },
+        "22": {
+            "id": 22,
+            "name": "Sliding Window"
+        },
+        "23": {
+            "id": 23,
+            "name": "Sorting & Partitioning"
+        },
+        "24": {
+            "id": 24,
+            "name": "Sorting & Two Pointers"
+        },
+        "25": {
+            "id": 25,
+            "name": "Two Heaps (Median maintenance)"
+        },
+        "26": {
+            "id": 26,
+            "name": "Two Pointers"
+        }
+    },
+    "problems": {
+        "two-sum": {
+            "id": "two-sum",
+            "title": "Two Sum",
+            "difficulty": "Easy",
+            "category": "Array",
+            "topicId": 1,
+            "patternIds": [
+                11
+            ],
+            "description": "Find two numbers that add up to target.",
+            "link": "https://leetcode.com/problems/two-sum/",
+            "tags": [
+                "Hash Map / Set"
+            ],
+            "complexity": {
+                "time": "O(n)",
+                "space": "O(n)"
+            }
+        }
+    }
+}
