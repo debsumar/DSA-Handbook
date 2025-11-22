@@ -15,11 +15,12 @@ import {
     Search,
     ArrowUpDown
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../../app/store';
 import { getCurrentStreak, getDailyGoalProgress, getLast10DaysActivity } from '../../../lib/streakUtils';
 import { useGetProblemsDataQuery } from '../problemsApi';
+import { setPattern } from '../problemsSlice';
 import { getTopicIcon } from '../../../lib/topicIcons';
 
 // --- Components ---
@@ -496,12 +497,20 @@ export const Home = () => {
     const [dailyGoal, setDailyGoal] = useState({ completed: 0, total: 5 });
     const [activityData, setActivityData] = useState<number[]>(Array(10).fill(0));
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     // Update streak and daily goal on mount and when completedProblemIds changes
     useEffect(() => {
         setStreak(getCurrentStreak(completedProblems));
         setDailyGoal(getDailyGoalProgress(completedProblems));
         setActivityData(getLast10DaysActivity(completedProblems));
     }, [completedProblems]);
+
+    const handlePatternClick = (patternId: number) => {
+        dispatch(setPattern(patternId));
+        navigate('/');
+    };
 
     // Calculate total completed
     const totalCompleted = completedProblemIds.length;
@@ -727,26 +736,21 @@ export const Home = () => {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 h-[200px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[var(--border-color)] scrollbar-track-transparent">
-                            {[
-                                { name: 'Two Pointers', desc: 'Array/String' },
-                                { name: 'Sliding Window', desc: 'Subarrays' },
-                                { name: 'Merge Intervals', desc: 'Scheduling' },
-                                { name: 'Fast & Slow', desc: 'Linked List' },
-                                { name: 'Cyclic Sort', desc: 'Arrays 1-N' },
-                                { name: 'In-place Reversal', desc: 'Linked List' },
-                                { name: 'BFS / DFS', desc: 'Graph/Tree' },
-                                { name: 'Topological Sort', desc: 'Dependencies' },
-                                { name: 'Two Heaps', desc: 'Median' },
-                                { name: 'Subsets', desc: 'Permutations' },
-                            ].map((p, i) => (
-                                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-primary)]/50 border border-[var(--border-color)] hover:border-[var(--accent-primary)]/30 hover:bg-[var(--bg-primary)] transition-all cursor-pointer group/item h-fit">
-                                    <div>
-                                        <div className="text-sm font-bold text-[var(--text-primary)]">{p.name}</div>
-                                        <div className="text-[10px] text-[var(--text-secondary)]">{p.desc}</div>
+                            {problemsData?.patterns
+                                .filter(p => p.id !== 1) // Filter out "All Patterns" if it exists with id 1
+                                .map((p) => (
+                                    <div
+                                        key={p.id}
+                                        onClick={() => handlePatternClick(p.id)}
+                                        className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-primary)]/50 border border-[var(--border-color)] hover:border-[var(--accent-primary)]/30 hover:bg-[var(--bg-primary)] transition-all cursor-pointer group/item h-fit"
+                                    >
+                                        <div>
+                                            <div className="text-sm font-bold text-[var(--text-primary)]">{p.name}</div>
+                                            <div className="text-[10px] text-[var(--text-secondary)]">View Problems</div>
+                                        </div>
+                                        <ArrowRight size={14} className="text-[var(--text-secondary)] opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all" />
                                     </div>
-                                    <ArrowRight size={14} className="text-[var(--text-secondary)] opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all" />
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </BentoCard>
 

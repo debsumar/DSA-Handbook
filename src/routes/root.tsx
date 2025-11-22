@@ -22,10 +22,10 @@ export const RootLayout = () => {
         <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300 font-sans">
             <nav className="flex items-center justify-between p-4 border-b border-[var(--border-color)] sticky top-0 bg-[var(--bg-primary)]/80 backdrop-blur-md z-50">
                 <Link to="/">
-                    <h1 className="text-4xl font-bold tracking-wider leading-snug" style={{ fontFamily: "'Pacifico', cursive" }}>
-                        <span className="text-[var(--text-primary)]">Practice Sheets </span>
+                    <h1 className="text-4xl font-bold tracking-wider leading-snug cursor-pointer" style={{ fontFamily: "'Pacifico', cursive" }}>
+                        <span className="text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors">Practice Sheets </span>
                         <span className="text-gray-500 italic text-lg ml-[10px] mr-[10px]">by </span>
-                        <span className="text-pink-500 text-lg animate-neon" style={{ fontFamily: "'Dancing Script', cursive" }}>debanjan</span>
+                        <span className="text-pink-500 text-lg animate-neon hover:text-pink-400 transition-colors" style={{ fontFamily: "'Dancing Script', cursive" }}>debanjan</span>
                     </h1>
                 </Link>
                 <div className="flex items-center gap-2">
